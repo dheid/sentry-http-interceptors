@@ -20,20 +20,20 @@ Include the dependency using Maven
 <dependency>
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
 or Gradle with Groovy DSL:
 
 ```groovy
-implementation 'org.drjekyll:sentry-http-interceptors:1.0.1'
+implementation 'org.drjekyll:sentry-http-interceptors:1.0.2'
 ```
 
 or Gradle with Kotlin DSL:
 
 ```kotlin
-implementation("org.drjekyll:sentry-http-interceptors:1.0.1")
+implementation("org.drjekyll:sentry-http-interceptors:1.0.2")
 ```
 
 Run your build tool and add the interceptors like in the following example:
