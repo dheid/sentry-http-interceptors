@@ -71,6 +71,10 @@ This project is licensed under the LGPL License - see the [license](LICENSE) fil
 
 ## :loudspeaker: Release Notes
 
+### 1.0.2
+
+Dependency updates
+
 ### 1.0.1
 
 First public version
