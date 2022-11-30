@@ -20,20 +20,20 @@ Include the dependency using Maven
 <dependency>
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>1.0.2</version>
+  <version>6.9.0</version>
 </dependency>
 ```
 
 or Gradle with Groovy DSL:
 
 ```groovy
-implementation 'org.drjekyll:sentry-http-interceptors:1.0.2'
+implementation 'org.drjekyll:sentry-http-interceptors:6.9.0'
 ```
 
 or Gradle with Kotlin DSL:
 
 ```kotlin
-implementation("org.drjekyll:sentry-http-interceptors:1.0.2")
+implementation("org.drjekyll:sentry-http-interceptors:6.9.0")
 ```
 
 Run your build tool and add the interceptors like in the following example:
@@ -70,6 +70,10 @@ the [tags on this repository](https://github.com/dheid/sentry-http-interceptors/
 This project is licensed under the LGPL License - see the [license](LICENSE) file for details.
 
 ## :loudspeaker: Release Notes
+
+### 6.9.0
+
+Use Sentry version number to let consumer find the correct version more easily
 
 ### 1.0.2
 
