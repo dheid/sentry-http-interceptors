@@ -96,7 +96,8 @@ class SentryHttpResponsetInterceptorTest {
     Breadcrumb breadcrumb = breadcrumpCaptor.getValue();
     assertThat(breadcrumb.getType()).isEqualTo("http");
     assertThat(breadcrumb.getCategory()).isEqualTo("http");
-    assertThat(breadcrumb.getData("url")).isEqualTo(URL);
+    assertThat(breadcrumb.getData("url")).isEqualTo("https://www.daniel-heid.de/page");
+    assertThat(breadcrumb.getData("http.query")).isEqualTo("query=string");
     assertThat(breadcrumb.getData("method")).isEqualTo(METHOD);
     assertThat(breadcrumb.getData("status_code")).isEqualTo(STATUS_CODE);
 
