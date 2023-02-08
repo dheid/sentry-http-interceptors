@@ -5,7 +5,7 @@
 
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>6.13.2-SNAPSHOT</version>
+  <version>6.13.1-SNAPSHOT</version>
 
   <name>Sentry Apache HttpClient 4</name>
   <description>Sends tracing information about Apache HttpClient 4 calls to Sentry</description>
