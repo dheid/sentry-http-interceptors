@@ -5,7 +5,7 @@
 
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>6.13.2-SNAPSHOT</version>
+  <version>6.14.0-SNAPSHOT</version>
 
   <name>Sentry Apache HttpClient 4</name>
   <description>Sends tracing information about Apache HttpClient 4 calls to Sentry</description>
@@ -69,14 +69,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <sentry.version>6.13.1</sentry.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>io.sentry</groupId>
       <artifactId>sentry</artifactId>
-      <version>${sentry.version}</version>
+      <version>6.14.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
