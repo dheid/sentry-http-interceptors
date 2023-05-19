@@ -1,13 +1,15 @@
 package org.drjekyll.sentry.apachehttpclient;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpRequestWrapper;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.util.Args;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.util.Args;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import io.sentry.Breadcrumb;
 import io.sentry.HubAdapter;
@@ -28,8 +30,8 @@ import io.sentry.SpanStatus;
  *   .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
  *   .build();
  * </pre>
- * This interceptor alone won't find the span, so you need
- * {@link SentryHttpRequestInterceptor} as well. The hub needs to be the same hub in both interceptors.
+ * This interceptor alone won't find the span, so you need {@link SentryHttpRequestInterceptor} as well. The hub needs
+ * to be the same hub in both interceptors.
  */
 public class SentryHttpResponseInterceptor implements HttpResponseInterceptor {
 
@@ -45,7 +47,7 @@ public class SentryHttpResponseInterceptor implements HttpResponseInterceptor {
   }
 
   @Override
-  public void process(HttpResponse response, HttpContext context) {
+  public void process(HttpResponse response, EntityDetails entity, HttpContext context) throws IOException {
     Args.notNull(response, "HTTP response");
     Args.notNull(context, "HTTP context");
     ISpan span = hub.getSpan();
@@ -53,26 +55,26 @@ public class SentryHttpResponseInterceptor implements HttpResponseInterceptor {
       return;
     }
     Object requestAttribute = context.getAttribute(HttpCoreContext.HTTP_REQUEST);
-    if (requestAttribute instanceof HttpRequestWrapper) {
-      HttpRequestWrapper request = (HttpRequestWrapper) requestAttribute;
-      if (request.getOriginal() instanceof HttpUriRequest && isCorrespondingSpan(span, request)) {
-        StatusLine statusLine = response.getStatusLine();
-        if (statusLine != null) {
-          int statusCode = statusLine.getStatusCode();
+    if (requestAttribute instanceof HttpRequest) {
+      HttpRequest request = (HttpRequest) requestAttribute;
+      try {
+        if (isCorrespondingSpan(span, request)) {
+          int statusCode = response.getCode();
           span.setStatus(SpanStatus.fromHttpStatusCode(statusCode));
-          HttpUriRequest original = (HttpUriRequest) request.getOriginal();
           hub.addBreadcrumb(Breadcrumb.http(
-            original.getURI().toString(),
-            original.getMethod(),
+            request.getUri().toString(),
+            request.getMethod(),
             statusCode
           ));
+          span.finish();
         }
-        span.finish();
+      } catch (URISyntaxException e) {
+        throw new IOException("Could not create request hash", e);
       }
     }
   }
 
-  private static boolean isCorrespondingSpan(ISpan span, HttpUriRequest request) {
+  private static boolean isCorrespondingSpan(ISpan span, HttpRequest request) throws URISyntaxException {
     Args.notNull(span, "Span");
     Args.notNull(request, "HTTP Request");
     if (!"http.client".equals(span.getOperation())) {

@@ -1,10 +1,10 @@
-# :flashlight: Sentry Apache HttpClient 4
+# :flashlight: Sentry HTTP Interceptors
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.drjekyll/sentry-http-interceptors.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.drjekyll%22%20AND%20a:%22sentry-http-interceptors%22)
 [![Java CI with Maven](https://github.com/dheid/sentry-http-interceptors/actions/workflows/build.yml/badge.svg)](https://github.com/dheid/sentry-http-interceptors/actions/workflows/build.yml)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W3EER56)
 
-Sends tracing information about Apache HttpClient 4 calls to Sentry:
+Sends tracing information about Apache HttpClient 5 calls to Sentry:
 
 * Creates a http.client span that shows the HTTP method and the full target URL
 * Adds a breadcrumb containing the HTTP URL, HTTP method and the HTTP response status code
@@ -20,20 +20,20 @@ Include the dependency using Maven
 <dependency>
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>6.19.0</version>
+  <version>6.19.2</version>
 </dependency>
 ```
 
 or Gradle with Groovy DSL:
 
 ```groovy
-implementation 'org.drjekyll:sentry-http-interceptors:6.19.0'
+implementation 'org.drjekyll:sentry-http-interceptors:6.19.2'
 ```
 
 or Gradle with Kotlin DSL:
 
 ```kotlin
-implementation("org.drjekyll:sentry-http-interceptors:6.19.0")
+implementation("org.drjekyll:sentry-http-interceptors:6.19.2")
 ```
 
 Run your build tool and add the interceptors like in the following example:
@@ -41,8 +41,8 @@ Run your build tool and add the interceptors like in the following example:
 ```java
 
 CloseableHttpClient client = HttpClientBuilder.create()
-  .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
-  .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+  .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+  .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
   .build();
 
 ```
@@ -70,6 +70,10 @@ the [tags on this repository](https://github.com/dheid/sentry-http-interceptors/
 This project is licensed under the LGPL License - see the [license](LICENSE) file for details.
 
 ## :loudspeaker: Release Notes
+
+### 6.19.2
+
+Using Apache HttpClient version 5 now
 
 ### > 6.9.0
 

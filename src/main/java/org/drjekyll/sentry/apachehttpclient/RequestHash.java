@@ -1,7 +1,9 @@
 package org.drjekyll.sentry.apachehttpclient;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.util.Args;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.util.Args;
+
+import java.net.URISyntaxException;
 
 final class RequestHash {
 
@@ -11,10 +13,10 @@ final class RequestHash {
     // utility
   }
 
-  static int create(HttpUriRequest httpUriRequest) {
-    Args.notNull(httpUriRequest, "HTTP request");
-    int uriHash = httpUriRequest.getURI() != null ? httpUriRequest.getURI().hashCode() : 0;
-    return 31 * uriHash + (httpUriRequest.getMethod() != null ? httpUriRequest.getMethod().hashCode() : 0);
+  static int create(HttpRequest httpRequest) throws URISyntaxException {
+    Args.notNull(httpRequest, "HTTP request");
+    int uriHash = httpRequest.getUri() != null ? httpRequest.getUri().hashCode() : 0;
+    return 31 * uriHash + (httpRequest.getMethod() != null ? httpRequest.getMethod().hashCode() : 0);
   }
 
 }

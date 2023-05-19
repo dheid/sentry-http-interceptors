@@ -3,12 +3,10 @@ package org.drjekyll.sentry.apachehttpclient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import io.sentry.HubAdapter;
 import io.sentry.ISpan;
@@ -33,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SentryApacheHttpClientIT {
 
   @Test
-  void addsSpan(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+  void addsSpan(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
 
     stubFor(get("/test").willReturn(ok()));
 
@@ -47,11 +45,12 @@ class SentryApacheHttpClientIT {
       true
     );
     CloseableHttpClient client = HttpClientBuilder.create()
-      .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
-      .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+      .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+      .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
       .build();
 
-    client.execute(new HttpGet(wireMockRuntimeInfo.getHttpBaseUrl() + "/test")).close();
+    HttpGet request = new HttpGet(wireMockRuntimeInfo.getHttpBaseUrl() + "/test");
+    client.execute(request).close();
     transaction.finish();
     Sentry.flush(1000L);
 
@@ -61,7 +60,7 @@ class SentryApacheHttpClientIT {
     assertThat(span.getDescription()).isEqualTo(expectedDescription);
     assertThat(span.getOperation()).isEqualTo("http.client");
     assertThat(span.getStatus()).isEqualTo(SpanStatus.OK);
-    assertThat(span.getData(RequestHash.SPAN_DATA_KEY)).isEqualTo(1455891989);
+    assertThat(span.getData(RequestHash.SPAN_DATA_KEY)).isEqualTo(RequestHash.create(request));
     SentryTraceHeader sentryTraceHeader = span.toSentryTrace();
     verify(getRequestedFor(urlEqualTo("/test")).withHeader("sentry-trace", equalTo(sentryTraceHeader.getValue()))
       .withHeader(
