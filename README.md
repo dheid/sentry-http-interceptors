@@ -73,7 +73,7 @@ This project is licensed under the LGPL License - see the [license](LICENSE) fil
 
 ### 6.19.2
 
-Using Apache HttpClient version 5 now
+Using Apache HttpClient version 5 now. Java 11 is required.
 
 ### > 6.9.0
 
