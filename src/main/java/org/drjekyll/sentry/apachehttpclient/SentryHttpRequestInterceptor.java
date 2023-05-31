@@ -28,12 +28,12 @@ import io.sentry.util.PropagationTargetsUtils;
  * request headers.
  * <p>
  * Add this interceptor as first request interceptor with
- * {@link org.apache.http.impl.client.HttpClientBuilder#addInterceptorFirst(HttpRequestInterceptor)} to measure the span
+ * {@link org.apache.hc.client5.http.impl.classic.HttpClientBuilder#addRequestInterceptorFirst(HttpRequestInterceptor)} to measure the span
  * duration precisely as possible:
  * <pre>
  * HttpClientBuilder.create()
- *   .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
- *   .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+ *   .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+ *   .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
  *   .build();
  * </pre>
  * This interceptor alone won't finish the span and won't add a breadcrumb, so you need

@@ -22,12 +22,12 @@ import io.sentry.SpanStatus;
  * {@link SentryHttpRequestInterceptor}.
  * <p>
  * Add this interceptor as last response interceptor with
- * {@link org.apache.http.impl.client.HttpClientBuilder#addInterceptorLast(HttpResponseInterceptor)} to measure the span
+ * {@link org.apache.hc.client5.http.impl.classic.HttpClientBuilder#addResponseInterceptorLast(HttpResponseInterceptor)} to measure the span
  * duration precisely as possible:
  * <pre>
  * HttpClientBuilder.create()
- *   .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
- *   .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+ *   .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+ *   .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
  *   .build();
  * </pre>
  * This interceptor alone won't find the span, so you need {@link SentryHttpRequestInterceptor} as well. The hub needs
