@@ -4,18 +4,57 @@
 [![Java CI with Maven](https://github.com/dheid/sentry-http-interceptors/actions/workflows/build.yml/badge.svg)](https://github.com/dheid/sentry-http-interceptors/actions/workflows/build.yml)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W3EER56)
 
-Sends tracing information about Apache HttpClient 5 calls to Sentry:
+Sends tracing information about Apache HttpClient calls to Sentry:
 
 * Creates a http.client span that shows the HTTP method and the full target URL
 * Adds a breadcrumb containing the HTTP URL, HTTP method and the HTTP response status code
 * Includes Sentry trace and baggage headers to requests made with Apache HttpClient
+* Supports version 4 and version 5 of Apache HttpClient
 * Easy to use
 * Well documented with Javadoc
 
 ## :wrench: Usage
 
-Include the dependency using Maven
+You need to provide your Apache HTTP Client 4 or 5 dependency on your own like this. For example for Apache HttpClient 4:
 
+Maven
+```xml
+<dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpclient</artifactId>
+  <version>4.5.14</version>
+</dependency>
+```
+Groovy
+```groovy
+implementation 'org.apache.httpcomponents:shttpclient:4.5.14'
+```
+Kotlin
+```kotlin
+implementation("org.apache.httpcomponents:shttpclient:4.5.14")
+```
+
+or Apache HttpClient 5:
+
+```xml
+<dependency>
+  <groupId>org.apache.httpcomponents.client5</groupId>
+  <artifactId>httpclient5</artifactId>
+  <version>5.2.1</version>
+</dependency>
+```
+Groovy
+```groovy
+implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+```
+Kotlin
+```kotlin
+implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+```
+
+Then include the dependency
+
+Maven
 ```xml
 <dependency>
   <groupId>org.drjekyll</groupId>
@@ -23,15 +62,11 @@ Include the dependency using Maven
   <version>6.24.0</version>
 </dependency>
 ```
-
-or Gradle with Groovy DSL:
-
+Groovy
 ```groovy
 implementation 'org.drjekyll:sentry-http-interceptors:6.24.0'
 ```
-
-or Gradle with Kotlin DSL:
-
+Kotlin
 ```kotlin
 implementation("org.drjekyll:sentry-http-interceptors:6.24.0")
 ```
@@ -70,6 +105,10 @@ the [tags on this repository](https://github.com/dheid/sentry-http-interceptors/
 This project is licensed under the LGPL License - see the [license](LICENSE) file for details.
 
 ## :loudspeaker: Release Notes
+
+### 6.24.0-1
+
+Added support for Apache HttpClient versions 4 and 5 simultaneously.
 
 ### >= 6.19.2
 

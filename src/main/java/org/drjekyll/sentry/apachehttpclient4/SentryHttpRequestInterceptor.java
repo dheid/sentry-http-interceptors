@@ -1,19 +1,17 @@
-package org.drjekyll.sentry.apachehttpclient;
+package org.drjekyll.sentry.apachehttpclient4;
 
-import org.apache.hc.core5.http.EntityDetails;
-import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpRequest;
-import org.apache.hc.core5.http.HttpRequestInterceptor;
-import org.apache.hc.core5.http.protocol.HttpContext;
-import org.apache.hc.core5.util.Args;
+import org.apache.http.Header;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.client.methods.HttpRequestWrapper;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.Args;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import io.sentry.BaggageHeader;
 import io.sentry.Breadcrumb;
@@ -28,12 +26,12 @@ import io.sentry.util.PropagationTargetsUtils;
  * request headers.
  * <p>
  * Add this interceptor as first request interceptor with
- * {@link org.apache.hc.client5.http.impl.classic.HttpClientBuilder#addRequestInterceptorFirst(HttpRequestInterceptor)} to measure the span
+ * {@link org.apache.http.impl.client.HttpClientBuilder#addInterceptorFirst(HttpRequestInterceptor)} to measure the span
  * duration precisely as possible:
  * <pre>
  * HttpClientBuilder.create()
- *   .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
- *   .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+ *   .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+ *   .addInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
  *   .build();
  * </pre>
  * This interceptor alone won't finish the span and won't add a breadcrumb, so you need
@@ -53,26 +51,25 @@ public class SentryHttpRequestInterceptor implements HttpRequestInterceptor {
   }
 
   @Override
-  public void process(@Nonnull HttpRequest request, @Nullable EntityDetails entity, @Nullable HttpContext context) throws IOException {
+  public void process(HttpRequest request, HttpContext context) {
     Args.notNull(request, "HTTP request");
-    ISpan activeSpan = hub.getSpan();
-    String method = request.getMethod();
-    String url;
-    try {
-      url = request.getUri().toString();
-    } catch (URISyntaxException e) {
-      throw new IOException("Could not read request URI", e);
+    if (!(request instanceof HttpRequestWrapper)) {
+      return;
     }
+    HttpRequestWrapper requestWrapper = (HttpRequestWrapper) request;
+    if (!(requestWrapper.getOriginal() instanceof HttpUriRequest)) {
+      return;
+    }
+    HttpUriRequest originalRequest = (HttpUriRequest) requestWrapper.getOriginal();
+    ISpan activeSpan = hub.getSpan();
+    String method = originalRequest.getMethod();
+    String url = originalRequest.getURI().toString();
     if (activeSpan == null) {
       hub.addBreadcrumb(Breadcrumb.http(url, method));
       return;
     }
     ISpan childSpan = activeSpan.startChild("http.client");
-    try {
-      childSpan.setData(RequestHash.SPAN_DATA_KEY, RequestHash.create(request));
-    } catch (URISyntaxException e) {
-      throw new IOException("Could not create request hash", e);
-    }
+    childSpan.setData(RequestHash.SPAN_DATA_KEY, RequestHash.create(requestWrapper));
     childSpan.setDescription(String.format("%s %s", method, url));
     final SentryTraceHeader sentryTraceHeader = childSpan.toSentryTrace();
     if (PropagationTargetsUtils.contain(hub.getOptions().getTracePropagationTargets(), url)) {

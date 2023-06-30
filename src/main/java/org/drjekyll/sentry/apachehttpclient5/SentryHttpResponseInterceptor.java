@@ -1,4 +1,4 @@
-package org.drjekyll.sentry.apachehttpclient;
+package org.drjekyll.sentry.apachehttpclient5;
 
 import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.HttpRequest;

@@ -1,9 +1,13 @@
-package org.drjekyll.sentry.apachehttpclient;
+package org.drjekyll.sentry.apachehttpclient4;
 
-import org.apache.hc.core5.http.HttpRequest;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.protocol.HttpContext;
-import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.RequestLine;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpRequestWrapper;
+import org.apache.http.message.BasicRequestLine;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -12,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.net.URI;
 
 import io.sentry.Breadcrumb;
@@ -34,6 +37,8 @@ class SentryHttpResponsetInterceptorTest {
 
   private static final int STATUS_CODE = 200;
 
+  private static final RequestLine REQUEST_LINE = new BasicRequestLine(METHOD, URL, new ProtocolVersion("HTTP", 1, 1));
+
   @InjectMocks
   private SentryHttpResponseInterceptor sentryHttpResponseInterceptor;
 
@@ -46,36 +51,44 @@ class SentryHttpResponsetInterceptorTest {
   @Mock
   private HttpResponse response;
 
+  private HttpRequestWrapper requestWrapper;
+
   @Mock
-  private HttpRequest request;
+  private HttpRequestWrapper originalRequest;
 
   @Mock
   private HttpContext context;
+
+  @Mock
+  private StatusLine statusLine;
 
   @Captor
   private ArgumentCaptor<Breadcrumb> breadcrumpCaptor;
 
   @Test
-  void doesNothingIfNoSpanIsGiven() throws IOException {
+  void doesNothingIfNoSpanIsGiven() {
 
-    sentryHttpResponseInterceptor.process(response, null, context);
+    sentryHttpResponseInterceptor.process(response, context);
 
-    verifyNoInteractions(span, response, context);
+    verifyNoInteractions(span, response, context, statusLine);
 
   }
 
   @Test
-  void finishesSpan() throws Exception {
+  void finishesSpan() {
 
-    given(request.getMethod()).willReturn(METHOD);
-    given(request.getUri()).willReturn(URI.create(URL));
-    given(context.getAttribute(HttpCoreContext.HTTP_REQUEST)).willReturn(request);
+    given(originalRequest.getMethod()).willReturn(METHOD);
+    given(originalRequest.getURI()).willReturn(URI.create(URL));
+    given(originalRequest.getRequestLine()).willReturn(REQUEST_LINE);
+    requestWrapper = HttpRequestWrapper.wrap(originalRequest);
+    given(context.getAttribute(HttpCoreContext.HTTP_REQUEST)).willReturn(requestWrapper);
     given(hub.getSpan()).willReturn(span);
     given(span.getOperation()).willReturn("http.client");
     given(span.getData(RequestHash.SPAN_DATA_KEY)).willReturn(1039494016);
-    given(response.getCode()).willReturn(STATUS_CODE);
+    given(response.getStatusLine()).willReturn(statusLine);
+    given(statusLine.getStatusCode()).willReturn(STATUS_CODE);
 
-    sentryHttpResponseInterceptor.process(response, null, context);
+    sentryHttpResponseInterceptor.process(response, context);
 
     verify(span).setStatus(SpanStatus.OK);
     verify(span).finish();
