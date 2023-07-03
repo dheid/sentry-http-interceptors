@@ -27,11 +27,11 @@ Maven
 ```
 Groovy
 ```groovy
-implementation 'org.apache.httpcomponents:shttpclient:4.5.14'
+implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 ```
 Kotlin
 ```kotlin
-implementation("org.apache.httpcomponents:shttpclient:4.5.14")
+implementation("org.apache.httpcomponents:httpclient:4.5.14")
 ```
 
 or Apache HttpClient 5:
