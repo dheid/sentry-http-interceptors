@@ -66,23 +66,39 @@ Groovy
 ```groovy
 implementation 'org.drjekyll:sentry-http-interceptors:6.24.0'
 ```
+
 Kotlin
+
 ```kotlin
 implementation("org.drjekyll:sentry-http-interceptors:6.24.0")
 ```
 
 Run your build tool and add the interceptors like in the following example:
 
+Apache Http Client 5:
+
 ```java
 
-CloseableHttpClient client = HttpClientBuilder.create()
+CloseableHttpClient client=HttpClientBuilder.create()
   .addRequestInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
   .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
   .build();
 
 ```
 
-After that the requests will be traced by Sentry, if Sentry is correctly configured in your application.
+Apache Http Client 4:
+
+```java
+
+CloseableHttpClient client=HttpClientBuilder.create()
+  .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
+  .addResponseInterceptorLast(new SentryHttpResponseInterceptor(HubAdapter.getInstance()))
+  .build();
+
+```
+
+After that the requests will be traced by Sentry, if Sentry is correctly configured in your
+application.
 
 ## :sunglasses: Development
 
