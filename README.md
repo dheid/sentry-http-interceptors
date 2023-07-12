@@ -59,18 +59,18 @@ Maven
 <dependency>
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>6.24.0</version>
+  <version>6.25.0</version>
 </dependency>
 ```
 Groovy
 ```groovy
-implementation 'org.drjekyll:sentry-http-interceptors:6.24.0'
+implementation 'org.drjekyll:sentry-http-interceptors:6.25.0'
 ```
 
 Kotlin
 
 ```kotlin
-implementation("org.drjekyll:sentry-http-interceptors:6.24.0")
+implementation("org.drjekyll:sentry-http-interceptors:6.25.0")
 ```
 
 Run your build tool and add the interceptors like in the following example:
@@ -122,7 +122,7 @@ This project is licensed under the LGPL License - see the [license](LICENSE) fil
 
 ## :loudspeaker: Release Notes
 
-### 6.24.0-1
+### >= 6.24.0-1
 
 Added support for Apache HttpClient versions 4 and 5 simultaneously.
 
