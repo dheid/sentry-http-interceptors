@@ -59,7 +59,7 @@ Maven
 <dependency>
   <groupId>org.drjekyll</groupId>
   <artifactId>sentry-http-interceptors</artifactId>
-  <version>6.25.0</version>
+  <version>6.28.0</version>
 </dependency>
 ```
 Groovy
