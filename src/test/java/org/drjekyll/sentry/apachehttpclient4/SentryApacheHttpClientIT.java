@@ -66,7 +66,7 @@ class SentryApacheHttpClientIT {
     verify(getRequestedFor(urlEqualTo("/test")).withHeader("sentry-trace", equalTo(sentryTraceHeader.getValue()))
       .withHeader(
         "baggage",
-        equalTo("sentry-environment=production,sentry-public_key=7caad69b389e41d98a74b1504b3c388f,sentry-sample_rate=1,sentry-trace_id=" + sentryTraceHeader.getTraceId() + ",sentry-transaction=TRANSACTION_NAME")
+        equalTo("sentry-environment=production,sentry-public_key=7caad69b389e41d98a74b1504b3c388f,sentry-sample_rate=1,sentry-sampled=true,sentry-trace_id=" + sentryTraceHeader.getTraceId() + ",sentry-transaction=TRANSACTION_NAME")
       ));
     verify(postRequestedFor(urlEqualTo("/api/42/envelope/"))
       .withRequestBody(containing(sentryTraceHeader.getSpanId().toString()))
