@@ -64,13 +64,13 @@ Maven
 ```
 Groovy
 ```groovy
-implementation 'org.drjekyll:sentry-http-interceptors:6.25.0'
+implementation 'org.drjekyll:sentry-http-interceptors:6.28.0'
 ```
 
 Kotlin
 
 ```kotlin
-implementation("org.drjekyll:sentry-http-interceptors:6.25.0")
+implementation("org.drjekyll:sentry-http-interceptors:6.28.0")
 ```
 
 Run your build tool and add the interceptors like in the following example:
