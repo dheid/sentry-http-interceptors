@@ -17,6 +17,7 @@ import io.sentry.SentryOptions;
 import io.sentry.SentryTraceHeader;
 import io.sentry.SentryTracer;
 import io.sentry.SpanStatus;
+import io.sentry.TransactionOptions;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -41,10 +42,13 @@ class SentryApacheHttpClientIT {
     options.setDsn("http://7caad69b389e41d98a74b1504b3c388f@localhost:" + wireMockRuntimeInfo.getHttpPort() + "/42");
     options.setTracesSampleRate(1.0);
     Sentry.init(options);
+
+    TransactionOptions transactionOptions = new TransactionOptions();
+    transactionOptions.setBindToScope(true);
     SentryTracer transaction = (SentryTracer) Sentry.startTransaction(
       "TRANSACTION_NAME",
       "TRANSACTION_OPERATION",
-      true
+      transactionOptions
     );
     CloseableHttpClient client = HttpClientBuilder.create()
       .addInterceptorFirst(new SentryHttpRequestInterceptor(HubAdapter.getInstance()))
